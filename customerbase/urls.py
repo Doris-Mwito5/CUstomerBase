@@ -5,7 +5,7 @@ from rest_framework import routers
 from core.views import CustomerViewSet, ProfessionViewset, DatasheetViewset, DocumentViewset
 
 router = routers.DefaultRouter()
-router.register(r'customers', CustomerViewSet)
+router.register(r'customers', CustomerViewSet, basename="customer")
 router.register(r'professions', ProfessionViewset)
 router.register(r'datasheets', DatasheetViewset)
 router.register(r'documents', DocumentViewset)
