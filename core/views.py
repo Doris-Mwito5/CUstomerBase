@@ -1,6 +1,7 @@
 from urllib import response
 from django.shortcuts import render, Http404
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from .models import Customer, Profession, Datasheet, Document
 from rest_framework import viewsets
 from .serializer import CustomerSerializer, ProfessionSerializer, DatasheetSerializer, DocumentSerializer 
@@ -66,6 +67,35 @@ class CustomerViewSet(viewsets.ModelViewSet):
         customer.save()
 
         serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        customer = self.get_object()
+        customer.delete()
+        return Response("object deleted")
+    
+    @action(detail=True)
+    def deactivate(self, request, **kwargs):
+        customer = self.get_object()
+        customer.active = False
+        customer.save()
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+    
+    @action(detail=False)
+    def deactivate_all(self, request, **kwargs):
+        customers = Customer.objects.all()
+        customers.update(active=False)
+        # customer.save()
+        serializer = CustomerSerializer(customers, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False)
+    def activate_all(self, request, **kwargs):
+        customers = Customer.objects.all()
+        customers.update(active=True)
+        # customer.save()
+        serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
 class ProfessionViewset(viewsets.ModelViewSet):
     queryset = Profession.objects.all()
